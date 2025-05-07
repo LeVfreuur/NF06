@@ -1,7 +1,8 @@
 #include <stdlib.h>
 
 int main(){
-
-    printf("yooo");
+    int y;
+    printf("yo");
+    scanf("%d", &y)
     return 0;
 }
