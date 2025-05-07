@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 typedef struct node{
     int ssn;
     int age;
@@ -48,6 +49,6 @@ int PriorityOrder(){
 int main(){
     int y;
     printf("yo testt");
-    scanf("%d", &y);
+    scanf("%d",&y);
     return 0;
 }
