@@ -1,54 +1,33 @@
 #include <stdlib.h>
 #include <stdio.h>
-typedef struct node{
-    int ssn;
+typedef struct Patient{
+    char ssn[9];
     int age;
-    int DateIn;
-    int TimeIn;
+    char DateIn[11]; //pour un format DD/MM/YYYY
+    char TimeIn[5]; //HH:MM
     int Priority;
+    int Symptomes[7];
+    struct Patient* next;
+}Patient;
+
+int calculatePriority(int Symptomes[]){
+    int priority=3;
+    if (Symptomes[1]==1||Symptomes[4]==1){
+        priority=2;
+    }
+    if (Symptomes[6]==1||Symptomes[5]==1){
+        priority=1;
+    }
+    return priority;
 }
 
-int PriorityOrder(){
+int  ReadPatientCSV(){
     FILE *file = fopen("patientTbT.csv", "r");
     if (file == NULL) {
         printf("Erreur : impossible d'ouvrir le fichier.\n");
         return 1;
     }
+    
 
-    char line[256];
-    int lineNumber = 0;
-
-    while (fgets(line, sizeof(line), file)) {
-        // Sauter l'en-tête
-        if (lineNumber == 0) {
-            lineNumber++;
-            continue;
-        }
-
-        int sum = 0;
-        int column = 0;
-        char *token = strtok(line, ",");
-
-        while (token != NULL) {
-            // Symptômes commencent à la 6e colonne (index 5)
-            if (column >= 5) {
-                sum += atoi(token); // convertit le token en entier et l'ajoute à la somme
-            }
-            column++;
-            token = strtok(NULL, ",");
-        }
-
-        printf("Ligne %d : Somme des symptômes = %d\n", lineNumber, sum);
-        lineNumber++;
-    }
-
-    fclose(file);
-    return 0;
-}
-
-int main(){
-    int y;
-    printf("yo testt");
-    scanf("%d",&y);
-    return 0;
+    
 }
