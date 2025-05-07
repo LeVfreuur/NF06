@@ -2,7 +2,7 @@
 
 int main(){
     int y;
-    printf("yo");
+    printf("yo testt");
     scanf("%d", &y)
     return 0;
 }
