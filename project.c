@@ -10,7 +10,7 @@ typedef struct node{
 
 int PriorityOrder(){
     FILE *file = fopen("patientTbT.csv", "r");
-    if (!file) {
+    if (file == NULL) {
         printf("Erreur : impossible d'ouvrir le fichier.\n");
         return 1;
     }
