@@ -2,7 +2,7 @@
 #include <stdio.h>
 typedef struct Patient{
     char ssn[9];
-    int age;
+    char age[3];
     char DateIn[11]; //pour un format DD/MM/YYYY
     char TimeIn[5]; //HH:MM
     int Priority;
@@ -12,10 +12,10 @@ typedef struct Patient{
 
 int calculatePriority(int Symptomes[]){
     int priority=3;
-    if (Symptomes[1]==1||Symptomes[4]==1){
+    if (Symptomes[1]=="1"||Symptomes[4]=="1"){
         priority=2;
     }
-    if (Symptomes[6]==1||Symptomes[5]==1){
+    if (Symptomes[6]=="1"||Symptomes[5]=="1"){
         priority=1;
     }
     return priority;
@@ -27,15 +27,38 @@ int  ReadPatientCSV(){
         printf("Erreur : impossible d'ouvrir le fichier.\n");
         return 1;
     }
+
     char line[256]; //tableau pour stocker une ligne du fichier csv
     int lineNumber=0; //ligne du tableau lue
-    while (fgets(line, sizeof(line), file)){
+    Patient *head=NULL; //pointe vers la tête de la liste chaînée
+
+
+    while (fgets(line, sizeof(line), file)){  //fgets lis les lignes du csv une par une
         if (lineNumber == 0){
             lineNumber++; //pour éviter de lire la première ligne avec les catégories
             continue; //saute le reste de la boucle
         }
 
-        char *token=(strtok(line, ",")); //enlève les virgules de la ligne et sépare chaque catégorie
+        int column=0;
+        char *token=(strtok(line, ",")); //enlève les virgules de la ligne et met des \0 à la place. strtok renvoie un pointeur vers un morceau de la chaîne d'origine (par exemple vers le SSN). 
+
+        /*On va se servir de strcpy, qui sert à copier chaque chaîne de caractère jusqu'à \0 ; strcpy(destination, pointeur argument)*/
+
+        while (token != NULL) {
+            if (column==0) strcpy(newPatient->ssn, token);
+
+            else if(column==1) strcpy(newPatient->dob, token);
+
+            else if (column == 2) strcpy(newPatient->pc, token); 
+
+            else if (column == 3) strcpy(newPatient->dateIn, token); 
+
+            else if (column == 4) strcpy(newPatient ->timeIn, token); 
+        }
+    
+        lineNumber++;
+    }
+    fclose(file);
 
         
     }
