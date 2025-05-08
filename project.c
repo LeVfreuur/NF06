@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 typedef struct Patient{
     char ssn[9];
     char age[3];
@@ -12,10 +13,10 @@ typedef struct Patient{
 
 int calculatePriority(int Symptomes[]){
     int priority=3;
-    if (Symptomes[1]=="1"||Symptomes[4]=="1"){
+    if (Symptomes[1]== 1||Symptomes[4]== 1){
         priority=2;
     }
-    if (Symptomes[6]=="1"||Symptomes[5]=="1"){
+    if (Symptomes[6]== 1 ||Symptomes[5]== 1 ){
         priority=1;
     }
     return priority;
@@ -39,6 +40,13 @@ int  ReadPatientCSV(){
             continue; //saute le reste de la boucle
         }
 
+        Patient *newPatient = (Patient *)malloc(sizeof(Patient));
+        if (!newPatient) {
+            printf("Erreur d'allocation mémoire.\n");
+            fclose(file);
+            return 1;
+        }
+
         int column=0;
         char *token=(strtok(line, ",")); //enlève les virgules de la ligne et met des \0 à la place. strtok renvoie un pointeur vers un morceau de la chaîne d'origine (par exemple vers le SSN). 
 
@@ -47,20 +55,31 @@ int  ReadPatientCSV(){
         while (token != NULL) {
             if (column==0) strcpy(newPatient->ssn, token);
 
-            else if(column==1) strcpy(newPatient->dob, token);
+            else if(column==1) strcpy(newPatient->age, token);
 
-            else if (column == 2) strcpy(newPatient->pc, token); 
+            else if (column == 3) strcpy(newPatient->DateIn, token); 
 
-            else if (column == 3) strcpy(newPatient->dateIn, token); 
+            else if (column == 4) strcpy(newPatient->TimeIn, token); 
 
-            else if (column == 4) strcpy(newPatient ->timeIn, token); 
+            else if(column>4){
+                // Symptômes (colonnes 6 à 10)
+                newPatient->Symptomes[column - 5] = atoi(token);  // Convertir les chaînes en int (0 ou 1)
+            }
+            token = strtok(NULL, ",");
+            column++;
         }
-    
+
+        newPatient->Priority = calculatePriority(newPatient->Symptomes) ;
+        newPatient->next = NULL;
+
+        //Ici, il faudra ajouter la fonction qui ajoute le patient à la liste chainée en fonction de sa priorité
+
         lineNumber++;
     }
     fclose(file);
-
-        
-    }
-
 }
+
+int main(){
+    return 0;
+}
+
