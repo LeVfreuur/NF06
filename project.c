@@ -27,7 +27,17 @@ int  ReadPatientCSV(){
         printf("Erreur : impossible d'ouvrir le fichier.\n");
         return 1;
     }
-    
+    char line[256]; //tableau pour stocker une ligne du fichier csv
+    int lineNumber=0; //ligne du tableau lue
+    while (fgets(line, sizeof(line), file)){
+        if (lineNumber == 0){
+            lineNumber++; //pour éviter de lire la première ligne avec les catégories
+            continue; //saute le reste de la boucle
+        }
 
-    
+        char *token=(strtok(line, ",")); //enlève les virgules de la ligne et sépare chaque catégorie
+
+        
+    }
+
 }
