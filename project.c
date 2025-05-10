@@ -22,17 +22,19 @@ int calculatePriority(int Symptomes[]){
     return priority;
 }
 
-void addPatient(*head Patient, Patient *NewPatient){ 
-    if (head==NULL ||newPatient->Priority<(head)->Priority){ //On modifie le head SEULEMENT si le nouveau patient est plus prioritaire
-        newPatient->next=*head;
-        *head=NewPatient;
+void ajouterPatientParPriorite(Patient **head, Patient *newPatient) {
+    if (*head == NULL || newPatient->Priority < (*head)->Priority) {
+        // Insère en tête si la liste est vide ou si le patient est plus prioritaire que le premier
+        newPatient->next = *head;
+        *head = newPatient;
         return;
     }
 
-    Patient *current=*head //créer une copie de head pour parcourir la liste sans toucher à head
+    Patient *current = *head;
 
+    // Cherche l'endroit où insérer : après tous les patients de priorité plus élevée ou égale
     while (current->next != NULL && current->next->Priority <= newPatient->Priority) {
-        current = current->next; //cherche l'endroit où insérer le patient
+        current = current->next;
     }
 
     // Insère le patient à cet endroit
