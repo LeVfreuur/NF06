@@ -142,7 +142,7 @@ int main() {
         current = current->next;
     }
 
-    return 0;
+    return 0; //brrrrrr
 }
 
 
