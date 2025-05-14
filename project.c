@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 typedef struct Patient{
-    char ssn[9];
+    char ssn[10];
     char DoB[11];
     int age;
     char DateIn[11]; //pour un format DD/MM/YYYY
-    char TimeIn[5]; //HH:MM
+    char TimeIn[6]; //HH:MM
     int Priority;
     int Symptomes[7];
     int Postal[5];
@@ -55,22 +55,27 @@ Patient*  ReadPatientCSV(){
 
         for (i=0;i<=8;i++){
             newPatient->ssn[i]=line[i];
+            newPatient->ssn[8]='\0';
         }
         for (i=10;i<=19;i++){
             newPatient->DoB[i-10]=line[i];
+            newPatient->DoB[10]='\0';
+
         }
         for (i=21;i<=25;i++){
-            newPatient->Postal[i-21]=atoi(line[i]);
+            newPatient->Postal[i-21]=line[i]-'0';
         }
         for (i= 27; i <= 36; i++){
             newPatient->DateIn[i-27]=line[i];
+            newPatient->DateIn[10]='\0';
         }
         for (i = 38; i <=42; i++){
             newPatient->TimeIn[i-38]=line[i];
+            newPatient->TimeIn[5]='\0';
         }
         for (i = 44; i <=56;i++ ){
-            if (i%0==0){
-                newPatient->Symptomes[(i-44)/2]=atoi(line[i]);
+            if (i%2==0){
+                newPatient->Symptomes[(i-44)/2]=line[i]-'0';
             }
         }
         
@@ -132,15 +137,18 @@ int main() {
     }
 
     printf("Liste des patients triés par priorité :\n");
-    printf("SSN\t\tAge\tDateIn\t\tTimeIn\tPriority\tSymptômes\n");
     printf("--------------------------------------------------------------------------\n");
 
+    int i;
     Patient* current = list;
     while (current != NULL) {
-        printf("%s\t%s\t%s\t%s\t%d\t\t", current->ssn, current->age, current->DateIn, current->TimeIn, current->Priority);
-        for (int i = 0; i < 7; i++) {
-            printf("%d", current->Symptomes[i]);
-            if (i < 6) printf(",");
+        printf("%s %s %s %d %s ", (current->ssn), (current->DateIn), (current->DoB), (current->Priority), (current->TimeIn));
+        for (i=0;i<=4;i++){
+            printf("%d",current->Postal[i]);
+        }
+        printf(" ");
+        for (i=0;i<=6;i++){
+            printf("%d",current->Symptomes[i]);
         }
         printf("\n");
         current = current->next;
