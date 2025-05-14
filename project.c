@@ -99,6 +99,7 @@ Patient*  ReadPatientCSV(){
             }
             newPatient->next = current->next;
             current->next = newPatient;
+            
             if (newPatient->next == NULL) {
                 end = newPatient;
             }
@@ -141,9 +142,17 @@ int main() {
         printf("\n");
         current = current->next;
     }
+<<<<<<< Updated upstream
 
     return 0; //brrrrrr
+=======
+    return 0;
+>>>>>>> Stashed changes
 }
+
+
+
+
 
 
 
