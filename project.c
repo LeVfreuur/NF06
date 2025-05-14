@@ -23,24 +23,61 @@ int calculatePriority(int Symptomes[]){
 }
 
 void ajouterPatientParPriorite(Patient **head, Patient *newPatient) {
-    if (*head == NULL || newPatient->Priority < (*head)->Priority) {
-        // Insère en tête si la liste est vide ou si le patient est plus prioritaire que le premier
-        newPatient->next = *head;
+    if (head == NULL || *head == NULL) { // Si la liste est vide
         *head = newPatient;
-        return;
+        newPatient->next = NULL;
+        // end = *head; // Assurez-vous que 'end' est bien déclaré globalement si vous l'utilisez
+    } else {
+        if (newPatient->Priority == 1) {
+            newPatient->next = *head;
+            *head = newPatient;
+        } else if (newPatient->Priority == 2) {
+            if ((*head)->Priority >= 2) {
+                newPatient->next = *head;
+                *head = newPatient;
+            } else {
+                Patient *current = *head;
+                while (current->next != NULL && current->next->Priority == 1) {
+                    current = current->next;
+                }
+                newPatient->next = current->next;
+                current->next = newPatient;
+                // if (newPatient->next == NULL) end = newPatient;
+            }
+        }
     }
-
-    Patient *current = *head;
-
-    // Cherche l'endroit où insérer : après tous les patients de priorité plus élevée ou égale
-    while (current->next != NULL && current->next->Priority <= newPatient->Priority) {
-        current = current->next;
-    }
-
-    // Insère le patient à cet endroit
-    newPatient->next = current->next;
-    current->next = newPatient;
 }
+
+        
+
+if (head==NULL){ //Si la liste est vide, donc pour la première itération
+            head=newPatient;
+            head->next=NULL;
+            end=head;
+        }
+        
+        //placement dans l'ordre par rapport à son priority
+        else {
+    if (newPatient->Priority == 1) {
+        newPatient->next = head;
+        head = newPatient;
+    }
+
+    else if (newPatient->Priority == 2) {
+        if (head->Priority >= 2) {
+            newPatient->next = head;
+            head = newPatient;
+        } else {
+            Patient *current = head;
+            while (current->next != NULL && current->next->Priority == 1) {
+                current = current->next;
+            }
+            newPatient->next = current->next;
+            current->next = newPatient;
+            if (newPatient->next == NULL) {
+                end = newPatient;
+            }
+        }
 
 
 int  ReadPatientCSV(){
@@ -101,7 +138,7 @@ int  ReadPatientCSV(){
 }
 
 int main(){
-    return 0;
     ReadPatientCSV();
+
 }
 
