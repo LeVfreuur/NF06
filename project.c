@@ -3,11 +3,13 @@
 #include <string.h>
 typedef struct Patient{
     char ssn[9];
-    char age[3];
+    char DoB[11];
+    int age;
     char DateIn[11]; //pour un format DD/MM/YYYY
     char TimeIn[5]; //HH:MM
     int Priority;
     int Symptomes[7];
+    int Postal[5];
     struct Patient* next;
 }Patient;
 
@@ -36,6 +38,7 @@ Patient*  ReadPatientCSV(){
     Patient *head=NULL; //pointe vers la tête de la liste chaînée
     Patient *end=NULL; //fin de la liste
 
+    int i;
 
     while (fgets(line, sizeof(line), file)){  //fgets lis les lignes du csv une par une
         if (lineNumber == 0){
@@ -50,28 +53,28 @@ Patient*  ReadPatientCSV(){
             return NULL;
         }
 
-        int column=0;
-        char *token=(strtok(line, ",")); //enlève les virgules de la ligne et met des \0 à la place. strtok renvoie un pointeur vers un morceau de la chaîne d'origine (par exemple vers le SSN). 
-
-        /*On va se servir de strcpy, qui sert à copier chaque chaîne de caractère jusqu'à \0 ; strcpy(destination, pointeur argument)*/
-
-        while (token != NULL) {
-            if (column==0) strcpy(newPatient->ssn, token);
-
-            else if(column==1) strcpy(newPatient->age, token);
-
-            else if (column == 3) strcpy(newPatient->DateIn, token); 
-
-            else if (column == 4) strcpy(newPatient->TimeIn, token); 
-
-            else if(column>4){
-                // Symptômes (colonnes 6 à 10)
-                newPatient->Symptomes[column - 5] = atoi(token);  // Convertir les chaînes en int (0 ou 1)
-            }
-            token = strtok(NULL, ",");
-            column++;
+        for (i=0;i<=8;i++){
+            newPatient->ssn[i]=line[i];
         }
-
+        for (i=10;i<=19;i++){
+            newPatient->DoB[i-10]=line[i];
+        }
+        for (i=21;i<=25;i++){
+            newPatient->Postal[i-21]=atoi(line[i]);
+        }
+        for (i= 27; i <= 36; i++){
+            newPatient->DateIn[i-27]=line[i];
+        }
+        for (i = 38; i <=42; i++){
+            newPatient->TimeIn[i-38]=line[i];
+        }
+        for (i = 44; i <=56;i++ ){
+            if (i%0==0){
+                newPatient->Symptomes[(i-44)/2]=atoi(line[i]);
+            }
+        }
+        
+        
         newPatient->Priority = calculatePriority(newPatient->Symptomes) ;
         newPatient->next = NULL;
         
@@ -142,12 +145,8 @@ int main() {
         printf("\n");
         current = current->next;
     }
-<<<<<<< Updated upstream
 
     return 0; //brrrrrr
-=======
-    return 0;
->>>>>>> Stashed changes
 }
 
 
