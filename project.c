@@ -64,7 +64,7 @@ Patient*  ReadPatientCSV(){
 
             else if (column == 4) strcpy(newPatient->TimeIn, token); 
 
-            else if(column>4){
+            else if(column>=5 && column <=11){
                 // Symptômes (colonnes 6 à 10)
                 newPatient->Symptomes[column - 5] = atoi(token);  // Convertir les chaînes en int (0 ou 1)
             }
@@ -142,12 +142,8 @@ int main() {
         printf("\n");
         current = current->next;
     }
-<<<<<<< Updated upstream
 
     return 0; //brrrrrr
-=======
-    return 0;
->>>>>>> Stashed changes
 }
 
 

@@ -166,7 +166,7 @@ Patient*  ReadPatientCSV(){
     return head;
 }
 
-
+/*
 int main(){
     FILE* fp=fopen("patientTbT.csv","r");
     char line[256];
@@ -181,5 +181,35 @@ int main(){
    fclose(fp);
     return 0;
     }
+*/
+
+void ajouterPatientParPriorite(Patient **head, Patient *newPatient) {
+    if (*head == NULL || newPatient->Priority < (*head)->Priority) {
+        // Insère en tête si la liste est vide ou si le patient est plus prioritaire que le premier
+        newPatient->next = *head;
+        *head = newPatient;
+        return;
+    }
+
+    Patient *current = *head;
+
+    // Cherche l'endroit où insérer : après tous les patients de priorité plus élevée ou égale
+    while (current->next != NULL && current->next->Priority <= newPatient->Priority) {
+        current = current->next;
+    }
+
+    // Insère le patient à cet endroit
+    newPatient->next = current->next;
+    current->next = newPatient;
+}
+
+
+
+int DoBToAge(char dob[10]){
+    char *year = dob+6;
+    int bornyear = atoi(year);
+    int age = 2025-bornyear;
+    return age;
+}
 
 
