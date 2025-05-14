@@ -102,5 +102,6 @@ int  ReadPatientCSV(){
 
 int main(){
     return 0;
+    ReadPatientCSV();
 }
 
