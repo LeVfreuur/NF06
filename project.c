@@ -120,8 +120,30 @@ Patient*  ReadPatientCSV(){
     return head;
 }
 
-int main(){
+int main() {
+    Patient* list = ReadPatientCSV();
+    if (list == NULL) {
+        printf("La liste est vide ou une erreur est survenue lors de la lecture.\n");
+        return 1;
+    }
+
+    printf("Liste des patients triés par priorité :\n");
+    printf("SSN\t\tAge\tDateIn\t\tTimeIn\tPriority\tSymptômes\n");
+    printf("--------------------------------------------------------------------------\n");
+
+    Patient* current = list;
+    while (current != NULL) {
+        printf("%s\t%s\t%s\t%s\t%d\t\t", current->ssn, current->age, current->DateIn, current->TimeIn, current->Priority);
+        for (int i = 0; i < 7; i++) {
+            printf("%d", current->Symptomes[i]);
+            if (i < 6) printf(",");
+        }
+        printf("\n");
+        current = current->next;
+    }
+
     return 0;
 }
+
 
 
