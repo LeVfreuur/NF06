@@ -168,25 +168,18 @@ Patient*  ReadPatientCSV(){
 
 
 int main(){
-
-    Patient* head=ReadPatientCSV();
-    Patient* curr=head;
-    int i;
-    while (curr!=NULL){
-        //ssn
-        printf("The SSN is : %s \n",curr->ssn);
-        //age
-        printf("The age is : %s \n",curr->age);
-        //date
-        printf("The date is : %s \n",curr->DateIn);
-        //time
-        printf("The time is : %s \n", curr->TimeIn);
-        //priority
-        printf("The priority is : %d \n",curr->Priority);
-        printf("----------------------- \n");
-        curr = curr->next;
+    FILE* fp=fopen("patientTbT.csv","r");
+    char line[256];
+    if (fp==NULL){
+        printf("Error");
     }
 
+   while (fgets(line,sizeof(line),fp) != NULL){
+    printf("%s",line);
+   }
+
+   fclose(fp);
     return 0;
-}
+    }
+
 
