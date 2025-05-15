@@ -235,8 +235,8 @@ int main() {
 
     printf("Test de la fonction addPatientHistory avec le patient dont le SSN est 21039485. Il est donc le deuxième de la liste \n");
     Patient* patient_test=list->next;
-    AddPatientHistory(patient_test);
-    current=ReadPatientCSV();
+
+    current = AddPatientHistory(list,patient_test);
 
     while (current != NULL) {
         printf("%s %s %s %d %s ", (current->ssn), (current->DateIn), (current->DoB), (current->Priority), (current->TimeIn));
