@@ -213,3 +213,19 @@ int DoBToAge(char dob[10]){
 }
 
 
+
+*Patient SearchBySSN(*head, char searchedssn[10]){
+    Patient *curr = head;
+    while (curr!=NULL || *curr->ssn==searchedssn){
+        curr=curr->next;
+    }
+    if (curr!=NULL){
+        printf("%s", curr->ssn);
+        printf("%d", curr->age);
+        printf("%s", curr->DateIn);
+        printf("%s", curr->TimeIn);
+        printf("%d", curr->Priority);
+        printf("%d", curr->Postal);
+    }
+    return curr;
+}

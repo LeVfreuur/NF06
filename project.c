@@ -206,6 +206,21 @@ Patient* AddPatientHistory(Patient*head,Patient*patient){
     return head;
 }
 
+Patient* SearchBySSN(Patient *head, char searchedssn[10]){
+    Patient *curr = head;
+    while (curr!=NULL || curr->ssn!=searchedssn){
+        curr=curr->next;
+    }
+    if (curr!=NULL){
+        printf("%s", curr->ssn);
+        printf("%d", curr->age);
+        printf("%s", curr->DateIn);
+        printf("%s", curr->TimeIn);
+        printf("%d", curr->Priority);
+        printf("%d", curr->Postal);
+    }
+    return curr;
+}
 
 int main() {
     Patient* list = ReadPatientCSV();
@@ -236,7 +251,10 @@ int main() {
     printf("Test de la fonction addPatientHistory avec le patient dont le SSN est 21039485. Il est donc le deuxième de la liste \n");
     Patient* patient_test=list->next;
 
-    current = AddPatientHistory(list,patient_test);
+
+    current = list;
+    Patient *TurboMegaPatientTest = SearchBySSN(list, patient_test->ssn);
+    //current = AddPatientHistory(list,patient_test);
 
     while (current != NULL) {
         printf("%s %s %s %d %s ", (current->ssn), (current->DateIn), (current->DoB), (current->Priority), (current->TimeIn));
