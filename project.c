@@ -131,7 +131,7 @@ Patient*  ReadPatientCSV(){
 
 
 void AddPatientHistory(Patient*patient){
-    FILE*fpTbTr = fopen("patientTbT.csv","w");
+    FILE*fpTbTr = fopen("patientTbT.csv","r");
     if (fpTbTr == NULL){
         printf("Error while openning 'patientTbT.csv'.");
     }
@@ -164,11 +164,6 @@ void AddPatientHistory(Patient*patient){
 
     while (fgets(line,sizeof(line),fpTbTr))
     {
-        if (lineNumber == 0){
-            lineNumber++; //pour éviter de lire la première ligne avec les catégories
-            fprintf(fpTempw,"%s \n",line);
-            continue; //saute le reste de la boucle
-        }
 
         if (strncmp(line,patient->ssn,8)){
 
