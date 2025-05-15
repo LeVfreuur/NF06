@@ -129,6 +129,65 @@ Patient*  ReadPatientCSV(){
     return head;
 }
 
+
+void AddPatientHistory(Patient*patient){
+    FILE*fpTbTr = fopen("patientTbT.csv","w");
+    if (fpTbTr == NULL){
+        printf("Error while openning 'patientTbT.csv'.");
+    }
+
+    FILE*fpTempw = fopen("temp.csv","w");
+    if (fpTempw == NULL){
+        printf("Error while openning 'temp.csv'.");
+    }
+
+    FILE*fpHistory = fopen("PatientHistory.csv","a"); //'a' pour écrire à la fin du fichier
+    if (fpHistory==NULL){
+        printf("Error while openning 'PatientHistory.csv'.");
+    }
+
+    int i;
+
+    fprintf(fpHistory,"%s,%s,",patient->ssn,patient->DoB);
+    for (i=0;i<=4;i++){
+        fprintf(fpHistory,"%d",patient->Postal[i]);
+    }
+    fprintf(fpHistory,",%s,%s",patient->DateIn,patient->TimeIn);
+    for ( i = 0; i <= 6; i++){
+        fprintf(fpHistory,",%d",patient->Symptomes[i]);
+    }
+    
+    fclose(fpHistory);
+
+    char line[256];
+    int lineNumber=0;
+
+    while (fgets(line,sizeof(line),fpTbTr))
+    {
+        if (lineNumber == 0){
+            lineNumber++; //pour éviter de lire la première ligne avec les catégories
+            fprintf(fpTempw,"%s \n",line);
+            continue; //saute le reste de la boucle
+        }
+
+        if (strncmp(line,patient->ssn,8)){
+
+        }
+        else{
+            fprintf(fpTempw,"%s \n",line);
+        }
+        lineNumber++;
+    }
+    fclose(fpTempw);
+    fclose(fpTbTr);
+    
+    remove("patientTbT.csv");
+    rename("temp.csv","patientTbT.csv");
+
+}
+
+
+
 int main() {
     Patient* list = ReadPatientCSV();
     if (list == NULL) {
@@ -141,6 +200,25 @@ int main() {
 
     int i;
     Patient* current = list;
+    while (current != NULL) {
+        printf("%s %s %s %d %s ", (current->ssn), (current->DateIn), (current->DoB), (current->Priority), (current->TimeIn));
+        for (i=0;i<=4;i++){
+            printf("%d",current->Postal[i]);
+        }
+        printf(" ");
+        for (i=0;i<=6;i++){
+            printf("%d",current->Symptomes[i]);
+        }
+        printf("\n");
+        current = current->next;
+    }
+
+
+    printf("Test de la fonction addPatientHistory avec le patient dont le SSN est 21039485. Il est donc le deuxième de la liste \n");
+    Patient* patient_test=list->next;
+    AddPatientHistory(patient_test);
+    current=ReadPatientCSV();
+
     while (current != NULL) {
         printf("%s %s %s %d %s ", (current->ssn), (current->DateIn), (current->DoB), (current->Priority), (current->TimeIn));
         for (i=0;i<=4;i++){
