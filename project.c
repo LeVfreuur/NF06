@@ -9,7 +9,7 @@ typedef struct Patient{
     char TimeIn[6]; //HH:MM
     int Priority;
     int Symptomes[7];
-    int Postal[5];
+    int Postal;
     struct Patient* next;
 }Patient;
 
@@ -69,9 +69,13 @@ Patient*  ReadPatientCSV(){
             newPatient->DoB[10]='\0';
 
         }
+        char Postal[6];
         for (i=21;i<=25;i++){
-            newPatient->Postal[i-21]=line[i]-'0';
+            Postal[i-21]=line[i]; // met le code postale dans une chaine de caractère
         }
+        Postal[6]='\0';
+        newPatient->Postal=atoi(Postal); //converti en une valeure entière le code postale stocké dans un int
+
         for (i= 27; i <= 36; i++){
             newPatient->DateIn[i-27]=line[i];
             newPatient->DateIn[10]='\0';
@@ -198,9 +202,9 @@ Patient* AddPatientHistory(Patient*head,Patient*patient){
     int i;
 
     fprintf(fpHistory,"%s,%s,",patient->ssn,patient->DoB);
-    for (i=0;i<=4;i++){
-        fprintf(fpHistory,"%d",patient->Postal[i]);
-    }
+
+        fprintf(fpHistory,"%d",patient->Postal);
+
     fprintf(fpHistory,",%s,%s",patient->DateIn,patient->TimeIn);
     for ( i = 0; i <= 6; i++){
         fprintf(fpHistory,",%d",patient->Symptomes[i]);
@@ -245,10 +249,9 @@ int main() {
     int i;
     Patient* current = list;
     while (current != NULL) {
-        printf("%s %s %s %d %s ", (current->ssn), (current->DateIn), (current->DoB), (current->Priority), (current->TimeIn));
-        for (i=0;i<=4;i++){
-            printf("%d",current->Postal[i]);
-        }
+        printf("%s %s %s %d %s %d", (current->ssn), (current->DateIn), (current->DoB), (current->Priority), (current->TimeIn), current->Postal);
+  
+        
         printf(" ");
         for (i=0;i<=6;i++){
             printf("%d",current->Symptomes[i]);
@@ -256,6 +259,7 @@ int main() {
         printf("\n");
         current = current->next;
     }
+    
 
 
     printf("Test de la fonction addPatientHistory avec le patient dont le SSN est 21039485. Il est donc le deuxième de la liste \n");
@@ -268,9 +272,9 @@ int main() {
 
     while (current != NULL) {
         printf("%s %s %s %d %s ", (current->ssn), (current->DateIn), (current->DoB), (current->Priority), (current->TimeIn));
-        for (i=0;i<=4;i++){
-            printf("%d",current->Postal[i]);
-        }
+
+            printf("%d",current->Postal);
+
         printf(" ");
         for (i=0;i<=6;i++){
             printf("%d",current->Symptomes[i]);
