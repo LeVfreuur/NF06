@@ -229,3 +229,4 @@ int DoBToAge(char dob[10]){
     }
     return curr;
 }
+

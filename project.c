@@ -13,6 +13,13 @@ typedef struct Patient{
     struct Patient* next;
 }Patient;
 
+int DoBToAge(char dob[10]){
+    char *year = dob+6;
+    int bornyear = atoi(year);
+    int age = 2025-bornyear;
+    return age;
+}
+
 int calculatePriority(int Symptomes[]){
     int priority=3;
     if (Symptomes[1]== 1||Symptomes[4]== 1){
@@ -79,6 +86,7 @@ Patient*  ReadPatientCSV(){
             }
         }
         
+        newPatient->age=DoBToAge(newPatient->DoB);
         
         newPatient->Priority = calculatePriority(newPatient->Symptomes) ;
         newPatient->next = NULL;
@@ -208,16 +216,18 @@ Patient* AddPatientHistory(Patient*head,Patient*patient){
 
 Patient* SearchBySSN(Patient *head, char searchedssn[10]){
     Patient *curr = head;
-    while (curr!=NULL || curr->ssn!=searchedssn){
+    while (curr!=NULL && strcmp(curr->ssn,searchedssn)!=0){
         curr=curr->next;
     }
     if (curr!=NULL){
-        printf("%s", curr->ssn);
-        printf("%d", curr->age);
-        printf("%s", curr->DateIn);
-        printf("%s", curr->TimeIn);
-        printf("%d", curr->Priority);
-        printf("%d", curr->Postal);
+        printf("%s ", curr->ssn);
+        printf("%d ", curr->age);
+        printf("%s ", curr->DateIn);
+        printf("%s ", curr->TimeIn);
+        printf("%d ", curr->Priority);
+        printf("%d \n", curr->Postal);
+    }else{
+        printf("Ce patient n'existe pas");
     }
     return curr;
 }
