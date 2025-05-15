@@ -129,9 +129,9 @@ Patient*  ReadPatientCSV(){
     return head;
 }
 
-
-void AddPatientHistory(Patient*patient){
-    FILE*fpTbTr = fopen("patientTbT.csv","r");
+Patient* DeletePatient(Patient* head,Patient* patient){
+    
+     FILE*fpTbTr = fopen("patientTbT.csv","r");
     if (fpTbTr == NULL){
         printf("Error while openning 'patientTbT.csv'.");
     }
@@ -140,6 +140,47 @@ void AddPatientHistory(Patient*patient){
     if (fpTempw == NULL){
         printf("Error while openning 'temp.csv'.");
     }
+
+    char line[256];
+    int lineNumber=0;
+
+    while (fgets(line,sizeof(line),fpTbTr))
+    {
+
+        if (strncmp(line,patient->ssn,8)!=0){
+            fprintf(fpTempw,"%s",line);
+        }
+        lineNumber++;
+    }
+    fclose(fpTempw);
+    fclose(fpTbTr);
+    
+    remove("patientTbT.csv");
+    rename("temp.csv","patientTbT.csv");
+    
+    
+    Patient*curr=head;
+
+    if (patient != head){
+        while (curr!=NULL && curr->next!=patient){
+            curr=curr->next;
+        }
+
+        if (curr->next == patient){
+            curr->next = patient->next;
+            free(patient);
+        }
+    }
+    else {
+        head=head->next;
+        free(patient);
+    }
+    return head;
+}
+
+Patient* AddPatientHistory(Patient*head,Patient*patient){
+
+    //écriture dans le patientHistory
 
     FILE*fpHistory = fopen("PatientHistory.csv","a"); //'a' pour écrire à la fin du fichier
     if (fpHistory==NULL){
@@ -159,28 +200,11 @@ void AddPatientHistory(Patient*patient){
     
     fclose(fpHistory);
 
-    char line[256];
-    int lineNumber=0;
+    //suprumier me patient de la linked list et du CSV en faisant appel a DelePatient
 
-    while (fgets(line,sizeof(line),fpTbTr))
-    {
-
-        if (strncmp(line,patient->ssn,8)){
-
-        }
-        else{
-            fprintf(fpTempw,"%s \n",line);
-        }
-        lineNumber++;
-    }
-    fclose(fpTempw);
-    fclose(fpTbTr);
-    
-    remove("patientTbT.csv");
-    rename("temp.csv","patientTbT.csv");
-
+    head = DeletePatient(head,patient);
+    return head;
 }
-
 
 
 int main() {
