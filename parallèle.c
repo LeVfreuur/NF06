@@ -230,3 +230,44 @@ int DoBToAge(char dob[10]){
     return curr;
 }
 
+//Generating reports
+
+#include <time.h>
+
+// Définition de la structure DateHeure
+typedef struct {
+    int jour;
+    int mois;
+    int annee;
+    int heure;
+    int minute;
+    int seconde;
+} DateHour;
+
+// Fonction qui retourne la date et l'heure actuelles
+DateHour ExactDate() {
+    time_t now;
+    struct tm *local;
+    DateHour dh;
+
+    time(&now);               // Obtenir le temps actuel
+    local = localtime(&now);  // Convertir en temps local
+
+    dh.jour = local->tm_mday;
+    dh.mois = local->tm_mon + 1;       // Les mois vont de 0 à 11
+    dh.annee = local->tm_year + 1900;  // Les années commencent à 1900
+    dh.heure = local->tm_hour;
+    dh.minute = local->tm_min;
+    dh.seconde = local->tm_sec;
+
+    return dh;
+}
+
+float AverageWaitingTime(Patient *head, DateHour precisedate){
+    Patient *curr=head;
+    float wait;
+    while (curr!=NULL){
+        wait=
+    }
+
+}
