@@ -263,11 +263,54 @@ DateHour ExactDate() {
     return dh;
 }
 
-float AverageWaitingTime(Patient *head, DateHour precisedate){
-    Patient *curr=head;
-    float wait;
-    while (curr!=NULL){
-        wait=
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+float AverageWaitingTime(Patient *head, DateHour precisedate) {
+    Patient *curr = head;
+    float total_wait = 0.0;
+    int count = 0;
+
+    while (curr != NULL) {
+        int jour, mois, annee, heure, minute;
+
+        // Parse DateIN : format "JJ/MM/AAAA"
+        sscanf(curr->DateIn, "%d/%d/%d", &jour, &mois, &annee);
+
+        // Parse TimeIn : format "HH:MM"
+        sscanf(curr->TimeIn, "%d:%d", &heure, &minute);
+
+        struct tm arrival_tm = {
+            .tm_year = annee - 1900,
+            .tm_mon  = mois - 1,
+            .tm_mday = jour,
+            .tm_hour = heure,
+            .tm_min  = minute,
+            .tm_sec  = 0
+        };
+
+        struct tm precise_tm = {
+            .tm_year = precisedate.annee - 1900,
+            .tm_mon  = precisedate.mois - 1,
+            .tm_mday = precisedate.jour,
+            .tm_hour = precisedate.heure,
+            .tm_min  = precisedate.minute,
+            .tm_sec  = precisedate.seconde
+        };
+
+        time_t arrival_time = mktime(&arrival_tm);
+        time_t precise_time = mktime(&precise_tm);
+
+        float wait = difftime(precise_time, arrival_time) / 60.0f;
+
+        total_wait += wait;
+        count++;
+        curr = curr->next;
     }
 
+    if (count == 0) return 0.0f;
+    return total_wait / count;
 }
+
