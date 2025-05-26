@@ -233,84 +233,40 @@ int DoBToAge(char dob[10]){
 //Generating reports
 
 #include <time.h>
-
-// Définition de la structure DateHeure
-typedef struct {
-    int jour;
-    int mois;
-    int annee;
-    int heure;
-    int minute;
-    int seconde;
-} DateHour;
-
-// Fonction qui retourne la date et l'heure actuelles
-DateHour ExactDate() {
-    time_t now;
-    struct tm *local;
-    DateHour dh;
-
-    time(&now);               // Obtenir le temps actuel
-    local = localtime(&now);  // Convertir en temps local
-
-    dh.jour = local->tm_mday;
-    dh.mois = local->tm_mon + 1;       // Les mois vont de 0 à 11
-    dh.annee = local->tm_year + 1900;  // Les années commencent à 1900
-    dh.heure = local->tm_hour;
-    dh.minute = local->tm_min;
-    dh.seconde = local->tm_sec;
-
-    return dh;
-}
-
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
-float AverageWaitingTime(Patient *head, DateHour precisedate) {
-    Patient *curr = head;
-    float total_wait = 0.0;
-    int count = 0;
 
-    while (curr != NULL) {
+float AverageWaitingTime(Patient *head) {
+    time_t now = time(NULL); //now stocke un temps, time_t est un type qui stocke des secondes
+    struct tm *tm_now = localtime(&now); //*tm_now pointe vers une struct tm définie dans le bibliothèque time. localtime est une fonction qui stocke dans now le nombre de secondes écoulées depuis le 1er janvier 1970.
+    time_t precise_time = now; //on stocke now dans precise_time
+
+    int count = 0; //compteur pour la moyenne
+    double total_wait = 0.0; //somme des temps d'attente
+
+    for (Patient *p = head; p != NULL; p = p->next) { //boucle pour parcourir toute la liste chaînée
         int jour, mois, annee, heure, minute;
+        struct tm tm_arr = {0}; //tm_arr est l'heure d'arrivée
 
-        // Parse DateIN : format "JJ/MM/AAAA"
-        sscanf(curr->DateIn, "%d/%d/%d", &jour, &mois, &annee);
+        // Parse date et heure d'arrivée
+        sscanf(p->DateIn, "%d/%d/%d", &jour, &mois, &annee);
+        sscanf(p->TimeIn, "%d:%d", &heure, &minute);
 
-        // Parse TimeIn : format "HH:MM"
-        sscanf(curr->TimeIn, "%d:%d", &heure, &minute);
+        tm_arr.tm_mday  = jour; 
+        tm_arr.tm_mon   = mois - 1;
+        tm_arr.tm_year  = annee - 1900;
+        tm_arr.tm_hour  = heure;
+        tm_arr.tm_min   = minute;
+        tm_arr.tm_sec   = 0; //on s'en fout des secondes wallah
 
-        struct tm arrival_tm = {
-            .tm_year = annee - 1900,
-            .tm_mon  = mois - 1,
-            .tm_mday = jour,
-            .tm_hour = heure,
-            .tm_min  = minute,
-            .tm_sec  = 0
-        };
-
-        struct tm precise_tm = {
-            .tm_year = precisedate.annee - 1900,
-            .tm_mon  = precisedate.mois - 1,
-            .tm_mday = precisedate.jour,
-            .tm_hour = precisedate.heure,
-            .tm_min  = precisedate.minute,
-            .tm_sec  = precisedate.seconde
-        };
-
-        time_t arrival_time = mktime(&arrival_tm);
-        time_t precise_time = mktime(&precise_tm);
-
-        float wait = difftime(precise_time, arrival_time) / 60.0f;
-
-        total_wait += wait;
-        count++;
-        curr = curr->next;
+        time_t arrival_time = mktime(&tm_arr);
+        if (arrival_time != (time_t)-1) {
+            total_wait += difftime(precise_time, arrival_time) / 60.0;
+            count++;
+        }
     }
 
     if (count == 0) return 0.0f;
-    return total_wait / count;
+    return (float)(total_wait / count);
 }
 

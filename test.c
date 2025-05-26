@@ -255,7 +255,7 @@ int main() {
         scanf("%d", &choix);
         getchar(); // pour supprimer le '\n'
 
-        switch (choix) {
+        switch (choix) { //cas par cas (pour éviter les if else)
             case 1:
                 list = ReadPatientCSV();
                 if (list == NULL) {
