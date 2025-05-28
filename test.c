@@ -239,6 +239,27 @@ Patient* SearchBySSN(Patient *head, char searchedssn[10]){
     return curr;
 }
 
+void NumberOfPatientTreated(){
+    int priority1=0;
+    int priority2=0;
+    int priority3=0;
+    Patient *head = ReadPatientCSV("PatientHistory.CSV");
+    for (Patient *p=head; p!=NULL; p = p->next){
+        if (p->Priority==1){
+            priority1++;
+        }
+        else if(p->Priority==2){
+            priority2++;
+        }
+        else if(p->Priority==3){
+            priority3++;
+        }
+    }
+    printf("Il y a eu %d patients traités en priorité 1.", priority1);
+    printf("Il y a eu %d patients traités en priorité 2.", priority2);
+    printf("Il y a eu %d patients traités en priorité 3.", priority3);
+}
+
 int main() {
     printf("DÉMARRAGE OK\n"); //ligne pour débuguer
     Patient* list = NULL;

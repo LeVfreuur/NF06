@@ -33,8 +33,8 @@ int calculatePriority(int Symptomes[]){
 
 
 
-Patient*  ReadPatientCSV(){
-    FILE *file = fopen("patientTbT.csv", "r");
+Patient*  ReadPatientCSV(char fichier[]){
+    FILE *file = fopen(fichier, "r");
     if (file == NULL) {
         printf("Erreur : impossible d'ouvrir le fichier.\n");
         return NULL;
@@ -237,7 +237,7 @@ Patient* SearchBySSN(Patient *head, char searchedssn[10]){
 }
 
 int main() {
-    Patient* list = ReadPatientCSV();
+    Patient* list = ReadPatientCSV("PatientHistory.csv");
     if (list == NULL) {
         printf("La liste est vide ou une erreur est survenue lors de la lecture.\n");
         return 1;
