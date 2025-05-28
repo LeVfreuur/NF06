@@ -166,22 +166,6 @@ Patient*  ReadPatientCSV(){
     return head;
 }
 
-/*
-int main(){
-    FILE* fp=fopen("patientTbT.csv","r");
-    char line[256];
-    if (fp==NULL){
-        printf("Error");
-    }
-
-   while (fgets(line,sizeof(line),fp) != NULL){
-    printf("%s",line);
-   }
-
-   fclose(fp);
-    return 0;
-    }
-*/
 
 void ajouterPatientParPriorite(Patient **head, Patient *newPatient) {
     if (*head == NULL || newPatient->Priority < (*head)->Priority) {
@@ -214,7 +198,7 @@ int DoBToAge(char dob[10]){
 
 
 
-*Patient SearchBySSN(*head, char searchedssn[10]){
+Patient* SearchBySSN(Patient* head, char searchedssn[10]){
     Patient *curr = head;
     while (curr!=NULL || *curr->ssn==searchedssn){
         curr=curr->next;

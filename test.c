@@ -65,7 +65,7 @@ Patient*  ReadPatientCSV(){
 
         for (i=0;i<=8;i++){
             newPatient->ssn[i]=line[i];
-            newPatient->ssn[8]='\0';
+            newPatient->ssn[9]='\0';
         }
         for (i=10;i<=19;i++){
             newPatient->DoB[i-10]=line[i];
@@ -264,6 +264,7 @@ int main() {
     printf("DÉMARRAGE OK\n"); //ligne pour débuguer
     Patient* list = NULL;
     int choix;
+    int choixb; 
     char ssn[10];
 
     do {
@@ -271,12 +272,13 @@ int main() {
         printf("1. Lire et afficher les patients (depuis CSV)\n");
         printf("2. Rechercher un patient par SSN\n");
         printf("3. Ajouter un patient à l'historique (et le supprimer de la liste)\n");
-        printf("4. Quitter\n");
+        printf("4. Report \n");
+        printf("5. Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
         getchar(); // pour supprimer le '\n'
 
-        switch (choix) { //cas par cas (pour éviter les if else)
+        switch (choix) {
             case 1:
                 list = ReadPatientCSV();
                 if (list == NULL) {
@@ -299,7 +301,6 @@ int main() {
             case 2:
                 printf("Entrez le SSN du patient à rechercher : ");
                 fgets(ssn, sizeof(ssn), stdin);
-                ssn[strcspn(ssn, "\n")] = '\0'; // enlever le \n
                 SearchBySSN(list, ssn);
                 break;
 
@@ -314,14 +315,36 @@ int main() {
                 }
                 break;
 
-            case 4:
+            case 4:   
+                
+                do{
+                printf("1. Average patient wait times per priority level \n2. Number of patients treated per priority level\n3. Leave\nYour choice :");
+                scanf("%d",&choixb);
+
+                switch(choixb){
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        printf("Back to menu...\n");
+                        break;
+                    default:
+                        printf("Error, choose a number between 1 and 3 please \n");
+                }
+
+                }while (choixb!=3);
+
+                break;
+
+            case 5:
                 printf("Fermeture du programme...\n");
                 break;
 
             default:
-                printf("Choix invalide. Veuillez entrer un numéro entre 1 et 4.\n");
+                printf("\nChoix invalide. Veuillez entrer un numéro entre 1 et 4.\n");
         }
-    } while (choix != 4);
+    } while (choix != 5);
 
     // Libération mémoire de la liste
     Patient *temp;
@@ -333,11 +356,3 @@ int main() {
 
     return 0;
 }
-
-
-
-
-
-
-
-
