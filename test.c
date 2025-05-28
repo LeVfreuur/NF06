@@ -325,7 +325,7 @@ int main() {
                     case 1:
                         break;
                     case 2:
-                        break;
+                        NumberOfPatientTreated();
                     case 3:
                         printf("Back to menu...\n");
                         break;
