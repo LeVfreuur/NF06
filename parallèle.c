@@ -219,40 +219,65 @@ Patient* SearchBySSN(Patient* head, char searchedssn[10]){
 #include <time.h>
 #include <stdio.h>
 
+void AverageWaitingTimeByPriority(Patient *head) {
+    time_t now = time(NULL);
+    time_t precise_time = now;
 
-float AverageWaitingTime(Patient *head) {
-    time_t now = time(NULL); //now stocke un temps, time_t est un type qui stocke des secondes
-    struct tm *tm_now = localtime(&now); //*tm_now pointe vers une struct tm définie dans le bibliothèque time. localtime est une fonction qui stocke dans now le nombre de secondes écoulées depuis le 1er janvier 1970.
-    time_t precise_time = now; //on stocke now dans precise_time
+    // Compteurs pour chaque priorité
+    int count1 = 0, count2 = 0, count3 = 0;
+    double total1 = 0.0, total2 = 0.0, total3 = 0.0;
 
-    int count = 0; //compteur pour la moyenne
-    double total_wait = 0.0; //somme des temps d'attente
-
-    for (Patient *p = head; p != NULL; p = p->next) { //boucle pour parcourir toute la liste chaînée
+    for (Patient *p = head; p != NULL; p = p->next) {
         int jour, mois, annee, heure, minute;
-        struct tm tm_arr = {0}; //tm_arr est l'heure d'arrivée
+        struct tm tm_arr = {0};
 
-        // Parse date et heure d'arrivée
+        // Lire la date et l'heure d'arrivée du patient
         sscanf(p->DateIn, "%d/%d/%d", &jour, &mois, &annee);
         sscanf(p->TimeIn, "%d:%d", &heure, &minute);
 
-        tm_arr.tm_mday  = jour; 
+        tm_arr.tm_mday  = jour;
         tm_arr.tm_mon   = mois - 1;
         tm_arr.tm_year  = annee - 1900;
         tm_arr.tm_hour  = heure;
         tm_arr.tm_min   = minute;
-        tm_arr.tm_sec   = 0; //on s'en fout des secondes wallah
+        tm_arr.tm_sec   = 0;
 
         time_t arrival_time = mktime(&tm_arr);
+
         if (arrival_time != (time_t)-1) {
-            total_wait += difftime(precise_time, arrival_time) / 60.0;
-            count++;
+            double wait_minutes = difftime(precise_time, arrival_time) / 60.0;
+
+            if (p->Priority == 1) {
+                total1 += wait_minutes;
+                count1++;
+            } else if (p->Priority == 2) {
+                total2 += wait_minutes;
+                count2++;
+            } else if (p->Priority == 3) {
+                total3 += wait_minutes;
+                count3++;
+            }
         }
     }
 
-    if (count == 0) return 0.0f;
-    return (float)(total_wait / count);
+    // Affichage des résultats
+    printf("Temps d'attente moyen :\n");
+    if (count1 > 0)
+        printf(" - Priorité 1 : %.2f minutes\n", total1 / count1);
+    else
+        printf(" - Priorité 1 : Aucun patient\n");
+
+    if (count2 > 0)
+        printf(" - Priorité 2 : %.2f minutes\n", total2 / count2);
+    else
+        printf(" - Priorité 2 : Aucun patient\n");
+
+    if (count3 > 0)
+        printf(" - Priorité 3 : %.2f minutes\n", total3 / count3);
+    else
+        printf(" - Priorité 3 : Aucun patient\n");
 }
+
 
 void NumberOfPatientTreated(){
     int priority1=0;
