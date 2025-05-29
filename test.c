@@ -212,6 +212,8 @@ Patient* AddPatientHistory(Patient*head,Patient*patient){
     for ( i = 0; i <= 6; i++){
         fprintf(fpHistory,",%d",patient->Symptomes[i]);
     }
+
+    fprintf(fpHistory,"\n");
     
     fclose(fpHistory);
 
