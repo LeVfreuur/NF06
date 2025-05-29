@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 typedef struct Patient{
     char ssn[10];
     char DoB[11];
@@ -33,8 +34,8 @@ int calculatePriority(int Symptomes[]){
 
 
 
-Patient*  ReadPatientCSV(){
-    FILE *file = fopen("patientTbT.csv", "r");
+Patient*  ReadPatientCSV(char fichier[]){
+    FILE *file = fopen(fichier, "r");
     if (file == NULL) {
         printf("Erreur : impossible d'ouvrir le fichier.\n");
         return NULL;
@@ -47,7 +48,7 @@ Patient*  ReadPatientCSV(){
 
     int i;
 
-    printf("Lecture du fichier CSV...\n"); //ligne de débugage 
+    printf("Reading the CSV file...\n"); //ligne de débugage 
 
 
     while (fgets(line, sizeof(line), file)){  //fgets lis les lignes du csv une par une
@@ -58,7 +59,7 @@ Patient*  ReadPatientCSV(){
 
         Patient *newPatient = (Patient *)malloc(sizeof(Patient));
         if (!newPatient) {
-            printf("Erreur d'allocation mémoire.\n");
+            printf("Memory allocation error...\n");
             fclose(file);
             return NULL;
         }
@@ -236,10 +237,70 @@ Patient* SearchBySSN(Patient *head, char searchedssn[10]){
         printf("%d ", curr->Priority);
         printf("%d \n", curr->Postal);
     }else{
-        printf("Ce patient n'existe pas");
+        printf("The patient don't exist.");
     }
     return curr;
 }
+
+void AverageWaitingTimeByPriority(Patient *head) {
+    time_t now = time(NULL);
+    time_t precise_time = now;
+
+    // Compteurs pour chaque priorité
+    int count1 = 0, count2 = 0, count3 = 0;
+    double total1 = 0.0, total2 = 0.0, total3 = 0.0;
+
+    for (Patient *p = head; p != NULL; p = p->next) {
+        int jour, mois, annee, heure, minute;
+        struct tm tm_arr = {0};
+
+        // Lire la date et l'heure d'arrivée du patient
+        sscanf(p->DateIn, "%d/%d/%d", &jour, &mois, &annee);
+        sscanf(p->TimeIn, "%d:%d", &heure, &minute);
+
+        tm_arr.tm_mday  = jour;
+        tm_arr.tm_mon   = mois - 1;
+        tm_arr.tm_year  = annee - 1900;
+        tm_arr.tm_hour  = heure;
+        tm_arr.tm_min   = minute;
+        tm_arr.tm_sec   = 0;
+
+        time_t arrival_time = mktime(&tm_arr);
+
+        if (arrival_time != (time_t)-1) {
+            double wait_minutes = difftime(precise_time, arrival_time) / 60.0;
+
+            if (p->Priority == 1) {
+                total1 += wait_minutes;
+                count1++;
+            } else if (p->Priority == 2) {
+                total2 += wait_minutes;
+                count2++;
+            } else if (p->Priority == 3) {
+                total3 += wait_minutes;
+                count3++;
+            }
+        }
+    }
+
+    // Affichage des résultats
+    printf("Average waiting time : \n");
+    if (count1 > 0)
+        printf(" - Priority 1 : %.2f minutes\n", total1 / count1);
+    else
+        printf(" - Priority 1 : No patient\n");
+
+    if (count2 > 0)
+        printf(" - Priority 2 : %.2f minutes\n", total2 / count2);
+    else
+        printf(" - Priority 2 : No patient\n");
+
+    if (count3 > 0)
+        printf(" - Priority 3 : %.2f minutes\n", total3 / count3);
+    else
+        printf(" - Priority 3 : No patient\n");
+}
+
 
 void NumberOfPatientTreated(){
     int priority1=0;
@@ -257,36 +318,37 @@ void NumberOfPatientTreated(){
             priority3++;
         }
     }
-    printf("Il y a eu %d patients traités en priorité 1.", priority1);
-    printf("Il y a eu %d patients traités en priorité 2.", priority2);
-    printf("Il y a eu %d patients traités en priorité 3.", priority3);
+    printf("There was %d patients treated in priority 1.", priority1);
+    printf("There was %d patients treated in priority 2.", priority2);
+    printf("There was %d patients treated in priority 3.", priority3);
 }
 
 int main() {
     printf("DÉMARRAGE OK\n"); //ligne pour débuguer
     Patient* list = NULL;
+    Patient* HistoryList = NULL;
     int choix;
     int choixb; 
     char ssn[10];
 
     do {
         printf("\n======== MENU ========\n");
-        printf("1. Lire et afficher les patients (depuis CSV)\n");
-        printf("2. Rechercher un patient par SSN\n");
-        printf("3. Ajouter un patient à l'historique (et le supprimer de la liste)\n");
-        printf("4. Report \n");
-        printf("5. Quitter\n");
-        printf("Votre choix : ");
+        printf("1. Read and display the patients\n");
+        printf("2. Search a patient by SSN\n");
+        printf("3. Add a patient to the history file (and delete it from the main)\n");
+        printf("4. Reports \n");
+        printf("5. Leave\n");
+        printf("Your choice : ");
         scanf("%d", &choix);
         getchar(); // pour supprimer le '\n'
 
         switch (choix) {
             case 1:
-                list = ReadPatientCSV();
+                list = ReadPatientCSV("PatientTbT.csv");
                 if (list == NULL) {
-                    printf("La liste est vide ou une erreur est survenue lors de la lecture.\n");
+                    printf("The list is empty or an error came.\n");
                 } else {
-                    printf("\nListe des patients triés par priorité :\n");
+                    printf("\nPatients list sorted by priority :\n");
                     printf("--------------------------------------------------------------------------\n");
                     Patient* current = list;
                     while (current != NULL) {
@@ -301,30 +363,35 @@ int main() {
                 break;
 
             case 2:
-                printf("Entrez le SSN du patient à rechercher : ");
+                list = ReadPatientCSV("PatientTbt.csv");
+                printf("Enter the SSN of the patient : ");
                 fgets(ssn, sizeof(ssn), stdin);
+                ssn[strcspn(ssn, "\n")] = '\0';
                 SearchBySSN(list, ssn);
                 break;
 
             case 3:
-                printf("Entrez le SSN du patient à déplacer vers l'historique : ");
+                HistoryList = ReadPatientCSV("PatientHistory.csv");
+                printf("Enter the SSN of the patient to move to the history file : ");
                 fgets(ssn, sizeof(ssn), stdin);
                 ssn[strcspn(ssn, "\n")] = '\0';
                 Patient* patientToMove = SearchBySSN(list, ssn);
                 if (patientToMove != NULL) {
                     list = AddPatientHistory(list, patientToMove);
-                    printf("Le patient a été déplacé dans l'historique.\n");
+                    printf("The patient has been moved to the history file.\n");
                 }
                 break;
 
             case 4:   
                 
                 do{
-                printf("1. Average patient wait times per priority level \n2. Number of patients treated per priority level\n3. Leave\nYour choice :");
+                printf("1. Average patient wait times per priority level \n2. Number of patients treated per priority level\n3. Leave\nYour choice : ");
                 scanf("%d",&choixb);
 
                 switch(choixb){
                     case 1:
+                        list = ReadPatientCSV("PatientTbT.csv");
+                        AverageWaitingTimeByPriority(list);
                         break;
                     case 2:
                         NumberOfPatientTreated();
@@ -340,11 +407,11 @@ int main() {
                 break;
 
             case 5:
-                printf("Fermeture du programme...\n");
+                printf("Closing the program...\n");
                 break;
 
             default:
-                printf("\nChoix invalide. Veuillez entrer un numéro entre 1 et 4.\n");
+                printf("\nInvalid choice. Please enter a number between 1 and 5.\n");
         }
     } while (choix != 5);
 
