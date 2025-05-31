@@ -299,3 +299,16 @@ void NumberOfPatientTreated(){
     printf("Il y a eu %d patients traités en priorité 2.", priority2);
     printf("Il y a eu %d patients traités en priorité 3.", priority3);
 }
+
+
+void ManuallyAdjustingPriority(Patient* head){
+    Patient* tochange;
+    char ManuallySSN[10];
+    int NewPriority;
+    printf("Please the enter the SSN of the patient you want to change the priority : ");
+    scanf("%d", &ManuallySSN);
+    tochange = SearchBySSN(*head, ManuallySSN);
+    printf("Enter the new priority for this patient");
+    scanf("%d", &NewPriority);
+    tochange->Priority = NewPriority;
+}

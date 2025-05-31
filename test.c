@@ -323,6 +323,18 @@ void NumberOfPatientTreated(){
     printf("There was %d patients treated in priority 3.", priority3);
 }
 
+void ManuallyAdjustingPriority(Patient* head){
+    Patient* tochange;
+    char ManuallySSN[10];
+    int NewPriority;
+    printf("Please the enter the SSN of the patient you want to change the priority : ");
+    scanf("%d", &ManuallySSN);
+    tochange = SearchBySSN(head, ManuallySSN);
+    printf("Enter the new priority for this patient");
+    scanf("%d", &NewPriority);
+    tochange->Priority = NewPriority;
+}
+
 int main() {
     printf("DÉMARRAGE OK\n"); //ligne pour débuguer
     Patient* list = NULL;
@@ -337,7 +349,8 @@ int main() {
         printf("2. Search a patient by SSN\n");
         printf("3. Add a patient to the history file (and delete it from the main)\n");
         printf("4. Reports \n");
-        printf("5. Leave\n");
+        printf("5. Manually adjusting a patient priority\n");
+        printf("6. Leave");
         printf("Your choice : ");
         scanf("%d", &choix);
         getchar(); // pour supprimer le '\n'
@@ -348,18 +361,31 @@ int main() {
                 if (list == NULL) {
                     printf("The list is empty or an error came.\n");
                 } else {
-                    printf("\nPatients list sorted by priority :\n");
+                    printf("\nPatients list grouped by priority:\n");
                     printf("--------------------------------------------------------------------------\n");
-                    Patient* current = list;
-                    while (current != NULL) {
-                        printf("%s %s %s %d %s %d ", current->ssn, current->DateIn, current->DoB, current->Priority, current->TimeIn, current->Postal);
-                        for (int i = 0; i <= 6; i++) {
-                            printf("%d", current->Symptomes[i]);
+
+                    for (int priority = 1; priority <= 3; priority++) {
+                        printf("PRIORITY %d:\n", priority);
+                        Patient* current = list;
+                        int found = 0;
+                        while (current != NULL) {
+                            if (current->Priority == priority) {
+                                printf("%s %s %s %d %s %d ", current->ssn, current->DateIn, current->DoB, current->Priority, current->TimeIn, current->Postal);
+                                for (int i = 0; i <= 6; i++) {
+                                    printf("%d", current->Symptomes[i]);
+                                }
+                                printf("\n");
+                                found = 1;
+                            }
+                            current = current->next;
                         }
-                        printf("\n");
-                        current = current->next;
+                        if (!found) {
+                            printf("No patients with priority %d\n", priority);
+                        }
+                        printf("--------------------------------------------------------------------------\n");
                     }
                 }
+
                 break;
 
             case 2:
@@ -405,15 +431,17 @@ int main() {
                 }while (choixb!=3);
 
                 break;
-
             case 5:
+                list = ReadPatientsCSV("PatientTbt.csv");
+                ManuallyAdjustingPriority(list);
+            case 6:
                 printf("Closing the program...\n");
                 break;
 
             default:
                 printf("\nInvalid choice. Please enter a number between 1 and 5.\n");
         }
-    } while (choix != 5);
+    } while (choix != 6);
 
     // Libération mémoire de la liste
     Patient *temp;
