@@ -432,7 +432,7 @@ int main() {
 
                 break;
             case 5:
-                list = ReadPatientsCSV("PatientTbt.csv");
+                list = ReadPatientCSV("PatientTbt.csv");
                 ManuallyAdjustingPriority(list);
             case 6:
                 printf("Closing the program...\n");
