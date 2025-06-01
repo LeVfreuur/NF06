@@ -1,0 +1,1 @@
+newPatient->ssn[8]='\0';

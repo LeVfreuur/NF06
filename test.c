@@ -14,6 +14,27 @@ typedef struct Patient{
     struct Patient* next;
 }Patient;
 
+float TimeConvertion(char time[6]){
+    char hourCara[3];
+    char minCara[3];
+
+    hourCara[0]=time[0];
+    hourCara[1]=time[1];
+
+    minCara[0]=time[3];
+    minCara[1]=time[4];
+
+    hourCara[2]='\0';
+    minCara[2]='\0';
+
+    float hourFloat=atoi(hourCara);
+    float minFloat=atoi(minCara);
+
+    float FinalTime=hourFloat + minFloat/60.0;
+
+    return FinalTime;
+}
+
 int DoBToAge(char dob[10]){
     char *year = dob+6;
     int bornyear = atoi(year);
@@ -335,6 +356,35 @@ void ManuallyAdjustingPriority(Patient* head){
     tochange->Priority = NewPriority;
 }
 
+Patient* PriorityEscalationSystem(Patient* patient, char ActualTime[6]){
+       float PassageTimeDecimal=TimeConvertion(patient->TimeIn);
+       float ActualTimeDecimal=TimeConvertion(ActualTime);
+
+       if (patient->Priority==1){
+        return patient;
+       }
+
+       if (patient->Priority==2){
+            if (ActualTimeDecimal-PassageTimeDecimal>=2){
+                patient->Priority=1;
+                return patient;
+            }
+            else{
+                return patient;
+            }
+       }
+
+       else{
+            if (ActualTimeDecimal-PassageTimeDecimal>=3){
+                patient->Priority=2;
+                return patient;
+            }
+            else{
+                return patient;
+            }
+       }
+}
+
 int main() {
     printf("DÉMARRAGE OK\n"); //ligne pour débuguer
     Patient* list = NULL;
@@ -342,6 +392,12 @@ int main() {
     int choix;
     int choixb; 
     char ssn[10];
+    time_t now;
+    struct tm *timeinfo;
+    char ActualTime[6];
+    time(&now); 
+    timeinfo = localtime(&now); // Convertit en heure locale
+    strftime(ActualTime, sizeof(ActualTime), "%H:%M", timeinfo);
 
     do {
         printf("\n======== MENU ========\n");
@@ -350,7 +406,8 @@ int main() {
         printf("3. Add a patient to the history file (and delete it from the main)\n");
         printf("4. Reports \n");
         printf("5. Manually adjusting a patient priority\n");
-        printf("6. Leave");
+        printf("6. Priority Escalation");
+        printf("7. Leave");
         printf("Your choice : ");
         scanf("%d", &choix);
         getchar(); // pour supprimer le '\n'
@@ -435,6 +492,22 @@ int main() {
                 list = ReadPatientCSV("PatientTbt.csv");
                 ManuallyAdjustingPriority(list);
             case 6:
+                char ActualTime[6];
+
+            
+                list = ReadPatientCSV("PatientTbT.csv");
+                if (list == NULL) {
+                    printf("The list is empty or an error came.\n");
+                } else {
+                    Patient* curr = list;
+                    while (curr != NULL){
+                        curr = PriorityEscalationSystem(curr,ActualTime);
+                    }
+
+                }
+                break;
+
+            case 7:
                 printf("Closing the program...\n");
                 break;
 
